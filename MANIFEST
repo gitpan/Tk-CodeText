@@ -1,6 +1,6 @@
 MANIFEST
 Makefile.PL
-test.pl
+demo.pl
 README
 CHANGES
 CodeText.pm

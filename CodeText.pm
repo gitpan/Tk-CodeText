@@ -1,7 +1,7 @@
 package Tk::CodeText;
 
 use vars qw($VERSION);
-$VERSION = '0.3.2';
+$VERSION = '0.3.3';
 use base qw(Tk::Derived Tk::TextUndo);
 use strict;
 use Storable;

@@ -1,4 +1,10 @@
 Tk::CodeText module changes log
+
+27 march 2004
+	removed -headerbackground bug from RulesEditor
+	renamed test.pl to demo.pl so testing without a connection to an
+	X-server will not fail.
+
 17 march 2004
 	Update to version 0.3.2
 	Added a decent test suite.

@@ -313,27 +313,20 @@ sub Populate {
 		-side => 'right',
 	);
 		
-	my $edfr = $cw->Frame(
-		-relief => 'groove',
-		-borderwidth => 2,
-	)->pack(@padding,
-		-expand => 1,
-		-fill => 'both',
-	);
-	my $taglist = $edfr->Scrolled('HList',
-		-browsecmd => sub { $cw->entryOpen(shift) },
-		-columns => 1,
-		-header => 1,
-		-scrollbars => 'osoe',
-#		-command => sub { },
-	)->pack(@padding,
+	my $tagfr = $cw->LabFrame(
+		-label => 'Tag names',
+		-labelside => 'acrosstop',
+	)->pack(
 		-side => 'left', 
 		-fill => 'both',
 	);
-	$taglist->headerCreate(0,
-		-itemtype => 'text',
-		-text => 'Tag names',
-		-headerbackground => $cw->optionGet('background', 'Label'),
+	my $taglist = $tagfr->Scrolled('HList',
+		-browsecmd => sub { $cw->entryOpen(shift) },
+		-columns => 1,
+		-scrollbars => 'osoe',
+	)->pack(@padding,
+		-expand => 1,
+		-fill => 'both',
 	);
 	my $rules = $widget->cget('-rules');
 	unless (defined($rules)) {
@@ -347,18 +340,10 @@ sub Populate {
 			-data => \@r,
 		);
 	}
-	$edfr->Adjuster(
-		-restore => 1,
-		-widget => $taglist,
-		-side => 'left',
-	)->pack(@padding,
-		-side => 'left',
-		-fill => 'y',
-	);
-	my $oppn = $edfr->Frame(
-		-relief => 'groove',
-		-borderwidth => 2,
-	)->pack(@padding,
+	my $oppn = $cw->LabFrame(
+		-label => 'Options',
+		-labelside => 'acrosstop',
+	)->pack(
 		-side => 'left',
 		-expand => 1,
 		-fill => 'both',
@@ -372,7 +357,6 @@ sub Populate {
 		-fill => 'both',
 	);
 	my $d = $df->Entry(
-#		-text => 'ABCDEFGHIJabcdefghij0123456789'
 	)->pack(@padding,
 		-expand => 1,
 		-fill => 'both'

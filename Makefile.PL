@@ -17,6 +17,7 @@ WriteMakefile(
 		"$pm/HTML.pm" => "$ld/$pm/HTML.pm",
 		"$pm/None.pm" => "$ld/$pm/None.pm",
 		"$pm/Perl.pm" => "$ld/$pm/Perl.pm",
+		"$pm/perl.pm" => "$ld/$pm/perl.pm",
 		"$pm/Pod.pm" => "$ld/$pm/Pod.pm",
 		"$pm/Template.pm" => "$ld/$pm/Template.pm",
 		"$pm/Xresources.pm" => "$ld/$pm/Xresources.pm",
