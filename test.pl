@@ -1,19 +1,40 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
+
 use strict;
+use blib;
 use Tk;
-
-my $m = new MainWindow;
+require Tk::MainWindow;
+require Tk::HList;
 require Tk::CodeText;
-my $e = $m->Scrolled('CodeText',
-	-disablemenu => 1,
-	-syntax => 'Perl',
+
+my $main = new MainWindow;
+my $ed;
+my $pl = $main->Scrolled('HList',
+	-scrollbars => 'osoe',
+	-browsecmd => sub {
+		my $stx = shift;
+		$ed->configure(-syntax => $stx);
+		$ed->Load("samples/$stx.test");
+	},
+)->pack(
+	-side => 'left', 
+	-fill => 'y'
+);
+$ed = $main->Scrolled('CodeText',
+	-wrap => 'none',
+	-syntax => 'Bash',
 	-scrollbars => 'se',
-)->pack(-expand => 1, -fill => 'both');
-$m->configure(-menu => $e->menu);
+)->pack(
+	-side => 'left',
+	-expand => 1,
+	-fill => 'both',
+);
 
-$m->protocol('WM_DELETE_WINDOW', sub {
-   if ($e->ConfirmEmptyDocument) { $m->destroy };
-});
-
-$m->MainLoop;
-
+my @plugs = $ed->highlightPlugList;
+foreach my $p (@plugs) {
+	$pl->add($p,
+		-text => $p,
+	);
+}
+$main->configure(-menu => $ed->menu);
+$main->MainLoop;

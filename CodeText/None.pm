@@ -25,11 +25,7 @@ sub rules {
 }
 
 sub stateCompare {
-	my ($hlt, $state) = @_;
-	my $h = [ $hlt->stateGet ];
-	my $equal = 1;
-	if (Dumper($h) ne Dumper($state)) { $equal = 0 };
-	return $equal;
+	return 1;
 }
 
 sub stateGet {

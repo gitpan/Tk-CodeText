@@ -1,7 +1,7 @@
 package Tk::CodeText::Pod;
 
 use vars qw($VERSION);
-$VERSION = '0.1'; # Initial release;
+$VERSION = '0.2';
 
 use strict;
 use base 'Tk::CodeText::Template';
@@ -12,8 +12,8 @@ sub new {
 	if (not defined($rules)) {
 		$rules =  [
 			['Text'],
-			['Bold', -font => [-weight => 'bold']],
-			['Italic', -font => [-slant => 'italic']],
+			['Bold', -foreground => 'purple'],
+			['Italic', -foreground => 'purple'],
 			['Exact', -foreground => 'brown'],
 			['Command', -foreground => 'orange'],
 			['Space', -background => 'beige'],
@@ -103,11 +103,6 @@ sub parseText {
 	$hlt->snippetParse;
 }
 
-sub syntax {
-	my $hlt = shift;
-	return 'Pod';
-}
-
 1;
 
 __END__
@@ -115,7 +110,7 @@ __END__
 
 =head1 NAME
 
-Tk::CodeText::Xresources - a Plugin for xresources files syntax highlighting
+Tk::CodeText::Pod - a Plugin for syntax highlighting of pod files.
 
 =head1 SYNOPSIS
 

@@ -33,9 +33,9 @@ brackets and curlies and automatic indenting of new lines.
 Syntax highlighting is done through a plugin approach. Adding languages 
 is a matter of writing plugin modules. Theoretically this is not limited to programming languages. 
 The plugin approach could also provide the possibility for grammar or spell checking in spoken 
-languages.
-
-Currently there is support for B<Bash>, B<HTML>, B<Perl>, B<Pod>, and B<Xresources>.
+languages. If you have written a plugin and it works, if you send it to me, i 
+will be happy to include it in the next release of Tk::CodeText. Currently there is
+support for B<Perl>, B<Pod>, B<Bash>, B<HTML> and B<Xresources>.
 
 =head1 OPTIONS
 
@@ -478,12 +478,6 @@ as set out in the B<From scratch> section.
 
 =cut
 
-=head1 CONTRIBUTIONS
-
-If you have written a plugin, i will be happy to include it in the next release
-of Tk::CodeText. If you send it to me, please have it accompanied with the 
-sample of code that you used for testing.
-
 =head1 AUTHOR
 
 =over 4
@@ -504,12 +498,20 @@ Unknown. If you find any, please contact the author.
 
 =over 4
 
+=item Find and eliminate bugs.
+
 =item Add additional language modules. I am going to need help on this one.
 
-=item HTML and Xresources plugins need rewriting.
+=item Optimize highlighting methods.
 
-=item The sample files in the test suite should be set up so that conformity
-with the language specification can actually be verified.
+Syntax highlighting consumes a lot of system resources. Squeezing every bit
+of performance out of it might make it less sluggish on slow systems, like
+a pentium at 100Mhz.
+
+If you're interested in this module, please have a look at the code 
+and point out to me where I might have overlooked something. Of special
+interest are the CodeText methods B<highlight> and B<highlightLine> as well as
+the code of the language modules.
 
 =back
 
@@ -520,7 +522,7 @@ with the language specification can actually be verified.
 =over 4
 
 =item B<Tk::Text>, B<Tk::TextUndo>, B<Tk::CodeText::None>, B<Tk::CodeText::Perl>
-B<Tk::CodeText::HTML>, B<Tk::CodeText::Template>, B<Tk::CodeText::Bash>
+B<Tk::CodeText::HTML>
 
 =back
 

@@ -136,11 +136,6 @@ sub highlight {
 	return @$out;
 }
 
-sub syntax {
-	my $hlt = shift;
-	return 'HTML';
-}
-
 1;
 
 __END__
@@ -170,7 +165,7 @@ for HTML to a Tk::CodeText text widget.
 
 It works quite fine, but can use refinement and optimization.
 
-It inherets Tk::CodeText::None. See also there.
+It inherits Tk::CodeText::None. See also there.
 
 =head1 METHODS
 

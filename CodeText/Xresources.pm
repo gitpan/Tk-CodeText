@@ -1,7 +1,7 @@
 package Tk::CodeText::Xresources;
 
 use vars qw($VERSION);
-$VERSION = '0.1'; # Initial release;
+$VERSION = '0.2';
 
 use strict;
 use base('Tk::CodeText::Template');
@@ -90,12 +90,6 @@ It inherits Tk::CodeText::Template. See also there.
 
 returns a list of string snippets and tags that can be inserted
 in a Tk::Text like widget instantly.
-
-=item B<syntax>
-
-returns 'Xresources'.
-
-=back
 
 =cut
 

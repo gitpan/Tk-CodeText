@@ -1,5 +1,14 @@
 Tk::CodeText module changes log
-
+17 march 2004
+	Update to version 0.3.2
+	Added a decent test suite.
+	Added support for bash.
+	Modified Tk::CodeText::Template.pm to support a more structured approach
+	for writing plugins. Things are backwards compatible. Plugins that inherit
+	Tk::CodeText::Template also don't need to specify a 'syntax' method any more.
+	Rewrote the rules editor, put it in a separate module.
+	Numerous small changes and additions
+	
 22 April 2003
 	Update to version 0.3.1
 	Added slant option to rules editor.

@@ -1,23 +1,31 @@
-use Tk::MMutil;
-use Tk::Config;
+use strict;
+use ExtUtils::MakeMaker;
 
-$pm = 'CodeText';
+my $pm = 'CodeText';
+my $ld = '$(INST_LIBDIR)';
 
-Tk::MMutil::TkExtMakefile(
-	'PREREQ_PM' => {
-		'Syntax::Highlight::Perl' => '1.0',
+WriteMakefile(
+	NAME => "Tk::$pm",
+	PREREQ_PM => {
+		'Tk' => '800.024',
+		'Syntax::Highlight::Perl' => 0,
 	},
-	'NAME'       => "Tk::$pm",
-	'DISTNAME'   => "Tk-$pm",
-	'VERSION_FROM' => "$pm.pm",
-	'dist'     => { COMPRESS => 'gzip -f9', SUFFIX => '.gz' },
+#	PMLIBDIRS => ['Tk'],
+	PM => {
+		"$pm.pm" => "$ld/$pm.pm",
+		"$pm/Bash.pm" => "$ld/$pm/Bash.pm",
+		"$pm/HTML.pm" => "$ld/$pm/HTML.pm",
+		"$pm/None.pm" => "$ld/$pm/None.pm",
+		"$pm/Perl.pm" => "$ld/$pm/Perl.pm",
+		"$pm/Pod.pm" => "$ld/$pm/Pod.pm",
+		"$pm/Template.pm" => "$ld/$pm/Template.pm",
+		"$pm/Xresources.pm" => "$ld/$pm/Xresources.pm",
+		"$pm.pod" => "$ld/$pm.pod",
+		"RulesEditor.pm" => "$ld/RulesEditor.pm",
+	},
+	VERSION_FROM => "$pm.pm",
+	'dist'	=> {COMPRESS => 'gzip', SUFFIX => 'gz'},
 	($] >= 5.005 ?
-		(
-		'ABSTRACT' => 'Text widget with syntax highlighting',
-		'AUTHOR'   => 'Hans Jeuken (haje@toneel.demon.nl)') : (),
-	 ),
+		(ABSTRACT => "a TextUndo widget with syntax highlight capabilities",
+		AUTHOR	=> 'Hans Jeuken (haje@toneel.demon.nl)') : ()),
 );
-
-
-
-

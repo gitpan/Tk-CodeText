@@ -1,7 +1,7 @@
 package Tk::CodeText::Perl;
 
 use vars qw($VERSION);
-$VERSION = '0.3';
+$VERSION = '0.4';
 use Syntax::Highlight::Perl;
 use base 'Syntax::Highlight::Perl';
 
@@ -115,7 +115,7 @@ sub stateSet {
 
 sub syntax {
 	my $hlt = shift;
-	return 'Perl'
+	return 'Perl',
 }
 
 1;

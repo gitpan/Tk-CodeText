@@ -1,7 +1,7 @@
 package Tk::CodeText::Template;
 
 use vars qw($VERSION);
-$VERSION = '0.1'; #initial rlease
+$VERSION = '0.3';
 
 use strict;
 use Data::Dumper;
@@ -13,13 +13,36 @@ sub new {
 		$rules =  [];
 	};
 	my $self = {};
-	$self->{'stack'} = [];
-	$self->{'rules'} = $rules,
-	$self->{'snippet'} = '';
-	$self->{'out'} = [];
 	$self->{'lists'} = {};
+	$self->{'out'} = [];
+	$self->{'rules'} = $rules,
+	$self->{'stack'} = [];
+	$self->{'snippet'} = '';
+	$self->{'callbacks'} = {};
+	$self->{'oneliners'} = [],
 	bless ($self, $class);
 	return $self;
+}
+
+sub callbacks {
+	my $hlt = shift;
+	if (@_) { $hlt->{'callbacks'} = shift; };
+	return $hlt->{'callbacks'};
+}
+
+sub highlight {
+	my ($hlt, $text) = @_;
+	$hlt->snippetParse;
+	my $out = $hlt->out;
+	@$out = ();
+	while ($text) {
+#		print "highlighting '$text'\n";
+#		print "mode is", $hlt->stackTop, "\n";
+		my $sub = $hlt->callbacks->{$hlt->stackTop};
+		$text = &$sub($hlt, $text);
+	}
+	$hlt->snippetParse;
+	return @$out;
 }
 
 sub lists {
@@ -31,7 +54,7 @@ sub lists {
 sub listAdd {
 	my $hlt = shift;
 	my $listname = shift;
-	print "listname $listname\n";
+#	print "listname $listname\n";
 	my $lst = $hlt->lists;
 	if (@_) {
 		$lst->{$listname} = [@_];
@@ -39,7 +62,7 @@ sub listAdd {
 		$lst->{$listname} = [];
 	}
 	my $r = $hlt->lists->{$listname};
-	print "added tokens\n"; foreach my $f (@$r) { print "   $f\n"; };
+#	print "added tokens\n"; foreach my $f (@$r) { print "   $f\n"; };
 }
 
 sub rules {
@@ -52,6 +75,22 @@ sub out {
 	my $hlt = shift;
 	if (@_) { $hlt->{'out'} = shift; }
 	return $hlt->{'out'};
+}
+
+sub parserError {
+	my ($hlt, $text) = @_;
+	my $s = $hlt->stack;
+	if (@$s eq 1) { #we cannot dump this mode because it's the lowest.
+		warn "Parser error\n\tmode: '" . $hlt->stackTop . "'\n" .
+			"text: '$text'\nparsing  as plain text";
+		$hlt->snippetParse($text);
+		$text =''; #Let's call it a day;
+	} else {
+		warn "Parser error\n\tmode: '" . $hlt->stackTop . "'\n" .
+			"text: '$text'\nexiting mode";
+		$hlt->stackPull;
+	};
+	return $text;
 }
 
 sub snippet {
@@ -67,10 +106,14 @@ sub snippetAppend {
 
 sub snippetParse {
 	my $hlt = shift;
+	my $snip = shift;
+	my $attr = shift;
+	unless (defined($snip)) { $snip = $hlt->snippet }
+	unless (defined($attr)) { $attr = $hlt->stackTop }
 	my $out = $hlt->{'out'};
-	my $snip = $hlt->snippet;
+#	print "parsing '$snip' with attribute '$attr'\n";
 	if ($snip) {
-		push(@$out, length($snip), $hlt->stackTop);
+		push(@$out, length($snip), $attr);
 		$hlt->snippet('');
 	}
 }
@@ -118,25 +161,34 @@ sub stateSet {
 	@$s = (@_);
 }
 
+sub syntax {
+	my $hlt = shift;
+	my $class = ref $hlt;
+	$class =~ /Tk::CodeText::(.*)/;
+	return $1;
+}
+
 sub tokenParse {
-	my ($hlt, $tkn) = @_;
+	my $hlt = shift;
+	my $tkn = shift;
 	$hlt->stackPush($tkn);
-	$hlt->snippetParse;
+	$hlt->snippetParse(@_);
 	$hlt->stackPull;
 }
 
 sub tokenTest {
 	my ($hlt, $test, $list) = @_;
+#	print "tokenTest $test\n";
 	my $l = $hlt->lists->{$list};
-	my $found = 0;
-	my $count = 0;
-	while (($count < @$l) and (! $found)) {
-		if ($l->[$count] eq $test) {
-			$found++
-		}
-		$count++
+	my @list = reverse sort @$l;
+#	return grep { ($test =~ /^$_/)  } @$l;
+	my @rl = grep { (substr($test, 0, length($_)) eq $_)  } @list;
+#	foreach my $r (@rl) { print "$r\n" }
+	if (@rl) {
+		return $rl[0]
+	} else {
+		return undef;
 	}
-	return $found;
 }
 1;
 
@@ -151,16 +203,24 @@ Tk::CodeText::Template - a template for syntax highlighting plugins
 
 =head1 DESCRIPTION
 
-Tk::CodeText::Template is some kind of a dummy module. All methods
-to provide highlighting in a Tk::CodeText widget are there, ready
-to do nothing.
-
-It is also a good starting point for writing modules for syntax
-highlighting for other languages.
+Tk::CodeText::Template is a framework to assist authors of plugin modules.
+All methods to provide highlighting in a Tk::CodeText widget are there, Just
+no syntax definitions and callbacks. An instance of Tk::CodeText::Template 
+should never be created, it's meant to be sub classed only. 
 
 =head1 METHODS
 
 =over 4
+
+=item B<callbacks>({I<'Tagname'> => I<\&callback>, ...});
+
+sets and returns the instance variable 'callbacks'
+
+=item B<highlight>(I<$text>);
+
+highlights I<$text>. It does so by selecting the proper callback
+from the B<commands> hash and invoke it. It will do so untill
+$text has been reduced to an empty string.
 
 =item B<listAdd>(I<'listname'>, I<$item1>, I<$item2> ...);
 
@@ -174,6 +234,13 @@ sets and returns the instance variable 'lists'.
 
 sets and returns the instance variable 'out'.
 
+=item B<parserError>(I<'text'>);
+
+Error trapping method. Tries to escape the current mode. If that is not
+possible, it will parse the text with the default tag. Furthermore it
+complains about being called at all. Usefull for debugging when writing
+a new plugin.
+
 =item B<rules>(I<?\@rules?>)
 
 sets and returns a reference to a list of tagnames and options.
@@ -183,10 +250,11 @@ By default it is set to [].
 
 appends I<$string> to the current snippet.
 
-=item B<snippetParse>
+=item B<snippetParse>(I<?$text?>, I<?$tagname?>)
 
-parses the current snippet of text to the 'out' list, and assigns the tagname
-that is returned by B<stackTop> to it. then snippet is set to ''.
+parses $text to the 'out' list, and assigns $tagname to it. If $tagname is
+not specified it will look for the tagname by calling B<stackTop>. If I<$text>
+is also not specified it will look for text by calling B<snippet>.
 
 =item B<stack>
 
@@ -204,7 +272,7 @@ puts I<$tagname> on top of the stack, increments stacksize by 1
 
 retrieves the element that is on top of the stack.
 
-=item B<stateCompare>(\@state);
+=item B<stateCompare>(I<\@state>);
 
 Compares two lists, \@state and the stack. returns true if they
 match.
@@ -221,7 +289,7 @@ Accepts I<@list> as the current stack.
 
 Parses the currently build snippet and tags it with 'Tagname'
 
-=item B<tokenTest>(I<'Listname'>, I<$value>);
+=item B<tokenTest>(I<$value>, I<'Listname'>);
 
 returns true if $value is and element of 'Listname' in the 'lists' hash
 
