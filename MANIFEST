@@ -1,0 +1,13 @@
+MANIFEST
+Makefile.PL
+test.pl
+CodeText.pm
+CodeText.pod
+README
+CHANGES
+CodeText/Perl.pm
+CodeText/None.pm
+CodeText/HTML.pm
+CodeText/Template.pm
+CodeText/Pod.pm
+CodeText/Xresources.pm
